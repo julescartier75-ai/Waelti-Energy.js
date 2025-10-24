@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { @apply bg-slate-50 text-slate-900; }
+.card { @apply bg-white rounded-2xl shadow p-5; }
+.kpi { @apply text-3xl font-semibold; }
+.label { @apply text-slate-500; }
+.btn { @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white hover:opacity-90 active:opacity-80; }
+.btn-secondary { @apply bg-slate-100 text-slate-900; }
+.btn-outline { @apply bg-transparent border border-slate-300 text-slate-900; }
+.input { @apply border border-slate-300 rounded-xl px-3 py-2 w-full bg-white; }
+.select { @apply border border-slate-300 rounded-xl px-3 py-2 w-full bg-white; }
+.table { @apply w-full text-sm; }
+.th { @apply text-left text-slate-500 py-2; }
+.td { @apply py-2; }

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { solarGet } from '../_helpers';
+import { solarGet } from '../../_helpers';
 
 export const dynamic = 'force-dynamic';
 

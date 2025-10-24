@@ -15,26 +15,46 @@ export default function Page() {
   const [newCurrent, setNewCurrent] = useState('');
 
   async function fetchAll() {
-    try {
-      setLoading(true);
-      const [nowRes, histRes, stRes, sessRes] = await Promise.all([
-        fetch('/api/solar/now').then((r) => r.json()),
-        fetch('/api/solar/history?hours=24').then((r) => r.json()),
-        fetch('/api/ecarup/stations').then((r) => r.json()),
-        fetch('/api/ecarup/sessions').then((r) => r.json()),
-      ]);
-      setNow(nowRes);
-      setHistory(histRes);
-      setStations(stRes);
-      setSessions(sessRes);
-      if (!selectedStation && stRes?.length) setSelectedStation(String(stRes[0].id));
-      setError(null);
-    } catch (e) {
-      setError(e?.message ?? 'Une erreur est survenue.');
-    } finally {
-      setLoading(false);
+  const getJson = async (url) => {
+    const r = await fetch(url, { cache: 'no-store' });
+    const text = await r.text(); // lit toujours le texte
+    if (!r.ok) {
+      // essaie JSON sinon remonte l'HTML pour debug
+      try { 
+        const j = JSON.parse(text);
+        throw new Error(`${url}: ${j.error || r.statusText}`);
+      } catch {
+        throw new Error(`${url}: HTTP ${r.status} – ${text.slice(0,120)}...`);
+      }
     }
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error(`${url}: réponse non-JSON`);
+    }
+  };
+
+  try {
+    setLoading(true);
+    const [nowRes, histRes, stRes, sessRes] = await Promise.all([
+      getJson('/api/solar/now'),
+      getJson('/api/solar/history?hours=24'),
+      getJson('/api/ecarup/stations'),
+      getJson('/api/ecarup/sessions'),
+    ]);
+    setNow(nowRes);
+    setHistory(histRes);
+    setStations(stRes);
+    setSessions(sessRes);
+    if (!selectedStation && stRes?.length) setSelectedStation(String(stRes[0].id));
+    setError(null);
+  } catch (e) {
+    setError(String(e.message || e));
+  } finally {
+    setLoading(false);
   }
+}
+
 
   useEffect(() => {
     fetchAll();
